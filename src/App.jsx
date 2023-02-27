@@ -47,8 +47,7 @@ function App() {
     context.restore();
   };
 
-  const clipCorner = (context, size) => {
-    const r = size / 6;
+  const clipCorner = (context, size, r) => {
     context.beginPath();
     context.moveTo(r, 0);
     context.arcTo(0, 0, 0, r, r);
@@ -71,7 +70,6 @@ function App() {
   const exportGooglePlayIcon = (size, foreground, background) => {
     let canvas = new OffscreenCanvas(size, size);
     const context = canvas.getContext('2d');
-    clipCorner(context, size);
     draw(context, size, foreground, background);
     return canvas.convertToBlob();
   };
@@ -80,7 +78,7 @@ function App() {
     let canvas = new OffscreenCanvas(size, size);
     const context = canvas.getContext('2d');
     context.translate(size / 10, size / 10);
-    clipCorner(context, Math.round(size * 0.8));
+    clipCorner(context, Math.round(size * 0.8), Math.round(size * 0.8) / 12);
     draw(context, Math.round(size * 0.8), foreground, background);
     return canvas.convertToBlob();
   };
@@ -103,12 +101,13 @@ function App() {
       xxhdpi: 3,
       xxxhdpi: 4,
     };
-    zip.file('google_play.png', exportGooglePlayIcon(512, foreground, background));
+    zip.file('ic_launcher-playstore.png', exportGooglePlayIcon(512, foreground, background));
+    const res = zip.folder('res');
     Object.keys(sizes).forEach((key) => {
-      let folder = zip.folder(`mipmap-${key}`);
-      folder.file('ic_launcher.png', exportLauncherIcon(48 * sizes[key], foreground, background));
-      folder = zip.folder(`drawable-${key}`);
-      folder.file('splash.png', exportSplashIcon(240 * sizes[key], foreground, background));
+      const mipmap = res.folder(`mipmap-${key}`);
+      mipmap.file('ic_launcher.png', exportLauncherIcon(48 * sizes[key], foreground, background));
+      const drawable = res.folder(`drawable-${key}`);
+      drawable.file('splash.png', exportSplashIcon(240 * sizes[key], foreground, background));
     });
     zip.generateAsync({type: 'blob'})
       .then((blob) => {
