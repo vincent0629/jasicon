@@ -83,6 +83,14 @@ function App() {
     return canvas.convertToBlob();
   };
 
+  const exportAdaptiveIcon = (size, foreground, background) => {
+    let canvas = new OffscreenCanvas(size, size);
+    const context = canvas.getContext('2d');
+    context.translate(size / 6, size / 6);
+    draw(context, Math.round(size * 2 / 3), foreground, background);
+    return canvas.convertToBlob();
+  };
+
   const exportSplashIcon = (size, foreground, background) => {
     let canvas = new OffscreenCanvas(size, size);
     const context = canvas.getContext('2d');
@@ -107,6 +115,7 @@ function App() {
       const mipmap = res.folder(`mipmap-${key}`);
       mipmap.file('ic_launcher.png', exportLauncherIcon(48 * sizes[key], foreground, background));
       const drawable = res.folder(`drawable-${key}`);
+      // drawable.file('ic_launcher_foreground.png', exportAdaptiveIcon(108 * sizes[key], foreground, background));
       drawable.file('splash.png', exportSplashIcon(240 * sizes[key], foreground, background));
     });
     zip.generateAsync({type: 'blob'})
