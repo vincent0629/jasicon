@@ -31,17 +31,19 @@ function App() {
     context.save();
     context.translate(size / 2, size / 2);
     if (background) {
-      const scale = Math.min(size / background.width, size / background.height);
+      const [width, height] = [background.naturalWidth, background.naturalHeight];
+      const scale = Math.min(size / width, size / height);
       context.save();
       context.scale(scale, scale);
-      context.drawImage(background, -background.width / 2, -background.height / 2);
+      context.drawImage(background, -width / 2, -height / 2);
       context.restore();
     }
     if (foreground) {
-      const scale = Math.min(size / foreground.width, size / foreground.height);
+      const [width, height] = [foreground.naturalWidth, foreground.naturalHeight];
+      const scale = Math.min(size / width, size / height);
       context.save();
       context.scale(scale, scale);
-      context.drawImage(foreground, -foreground.width / 2, -foreground.height / 2);
+      context.drawImage(foreground, -width / 2, -height / 2);
       context.restore();
     }
     context.restore();
