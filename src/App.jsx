@@ -166,7 +166,7 @@ function App() {
         </div>
         <div className="m-2 border p-2 grow">
           <div className="font-bold">Preview</div>
-          <canvas className="border" width="192" height="192" ref={canvasRef} />
+          <canvas className="border w-[192px] h-[192px]" width={`${192 * window.devicePixelRatio}`} height={`${192 * window.devicePixelRatio}`} ref={canvasRef} />
           <div className="mt-2"><button onClick={onExport}>Export</button></div>
         </div>
       </div>
