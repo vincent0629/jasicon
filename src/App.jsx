@@ -5,6 +5,8 @@ import './App.css'
 function App() {
   const [foreground, setForeground] = useState(null);
   const [background, setBackground] = useState(null);
+  const launcherRef = useRef(null);
+  const splashRef = useRef(null);
   const canvasRef = useRef(null);
 
   const onForegroundChanged = (event) => {
@@ -103,6 +105,8 @@ function App() {
   };
 
   const onExport = useCallback((event) => {
+    const launcherIconName = `${launcherRef.current.value}.png`;
+    const splashIconName = `${splashRef.current.value}.png`;
     const zip = new JSZip();
     const sizes = {
       mdpi: 1,
@@ -115,10 +119,10 @@ function App() {
     const res = zip.folder('res');
     Object.keys(sizes).forEach((key) => {
       const mipmap = res.folder(`mipmap-${key}`);
-      mipmap.file('ic_launcher.png', exportLauncherIcon(48 * sizes[key], foreground, background));
+      mipmap.file(launcherIconName, exportLauncherIcon(48 * sizes[key], foreground, background));
       const drawable = res.folder(`drawable-${key}`);
       // drawable.file('ic_launcher_foreground.png', exportAdaptiveIcon(108 * sizes[key], foreground, background));
-      drawable.file('splash.png', exportSplashIcon(240 * sizes[key], foreground, background));
+      drawable.file(splashIconName, exportSplashIcon(240 * sizes[key], foreground, background));
     });
     zip.generateAsync({type: 'blob'})
       .then((blob) => {
@@ -144,12 +148,20 @@ function App() {
       <div className="flex flex-row">
         <div className="flex flex-col">
           <div className="m-2 border p-2">
-            <div className="font-bold">Foreground</div>
+            <div className="font-bold">Foreground image</div>
             <input type="file" accept="image/*" onChange={onForegroundChanged} />
           </div>
           <div className="m-2 border p-2">
-            <div className="font-bold">Background</div>
+            <div className="font-bold">Background image</div>
             <input type="file" accept="image/*" onChange={onBackgroundChanged} />
+          </div>
+          <div className="m-2 border p-2">
+            <div className="font-bold">Launcher icon name</div>
+            <input type="text" defaultValue="ic_launcher" ref={launcherRef} />
+          </div>
+          <div className="m-2 border p-2">
+            <div className="font-bold">Splash icon name</div>
+            <input type="text" defaultValue="splash_icon" ref={splashRef} />
           </div>
         </div>
         <div className="m-2 border p-2 grow">
